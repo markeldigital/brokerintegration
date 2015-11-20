@@ -7,13 +7,13 @@ iframe or link
 ## Terminology
 
 <dl>
-  <dd>Pre-shared key</dd>
-  <dt>This is a key that is used to validate the authenicity of the request and should be treated as a private secret that only Markel and the broker have visibility of.</dt>
+  <dt>Pre-shared key</dt>
+  <dd>This is a key that is used to validate the authenicity of the request and should be treated as a private secret that only Markel and the broker have visibility of.</dd>
 </dl>
 
 ## Security
 
-Addressed by signed requests from the remote system using a 32 character pre-shared key (psk).
+All data is to be transferred securely using HTTPS/TLS encryption between the broker and Markel's systems. Authenticating the data will be achieved using signing with a 32 character pre-shared key (PSK).
 
 ### User Data Transfer
 
