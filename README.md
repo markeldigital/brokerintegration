@@ -55,10 +55,10 @@ base64(sha256(${psk}+${policy_number}+${first_name}+${middle}+${surname}+${email
 
 #### HTTP Status Codes
 
-201 Created - Reference data saved correctly.
-400 Bad Request - do not retry the pre shared key needs to be updated.
-410 Gone - session has expired do not retry.
-5xx Server Error - retry later.
+* 201 Created - Reference data saved correctly.
+* 400 Bad Request - do not retry the pre shared key needs to be updated.
+* 410 Gone - session has expired do not retry.
+* 5xx Server Error - retry later.
 
 ## Quote Journey
 
@@ -74,7 +74,7 @@ base64(sha256(${psk}+${epoch}+${policy_number}+${locale}))
 
 ### HTTP Status Codes
 
-201 Created - Reference data saved correctly.
-400 Bad Request - do not retry the pre shared key needs to be updated.
-410 Gone - session has expired do not retry.
-5xx Server Error - retry later.
+* 201 Created - Reference data saved correctly.
+* 400 Bad Request - do not retry the pre shared key needs to be updated.
+* 410 Gone - session has expired do not retry.
+* 5xx Server Error - retry later.
