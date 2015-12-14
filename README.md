@@ -32,9 +32,11 @@ https://${host}/product/officepack/?sig=${signature}
   “first_name”: ${first_name},
   “middle”: ${middle_name},
   “surname”: ${surname},
-  “email”: ${email},
-  “business_telephone”: ${business_telephone},
-  “business_fax”: ${business_fax},
+  "contact_details": {
+    { "type": "email", "contact": ${email}, "desc": "primary" },
+    { "type": "tel", "contact": ${business_telephone}, "desc": "business_telephone" },
+    { "type": "tel", "contact": ${business_fax}, "desc": "business_fax" }
+  }
   “residental_address”: {
     “line1”: ${line1},
     “line2”: ${line2},
