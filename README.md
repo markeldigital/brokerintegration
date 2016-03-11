@@ -56,7 +56,7 @@ https://${host}/product/officepack/?sig=${signature}
 
 // signature
 
-base64(sha256(${psk}+${policy_number}+${first_name}+${middle}+${surname}+${email}+${business_telephone}+${business_fax}+${residential_address::line1}+${residential_address::line2}+${residential_address::city}+${residential_address::province}+${residential_address::post_code}+${mailing_address::line1}+${mailing_address::line2}+${mailing_address::city}+${mailing_address::province}+${mailing_address::post_code}+${correspondence_locale}))
+base64(sha256hmac(${psk}, ${policy_number}+${first_name}+${middle}+${surname}+${email}+${business_telephone}+${business_fax}+${residential_address::line1}+${residential_address::line2}+${residential_address::city}+${residential_address::province}+${residential_address::post_code}+${mailing_address::line1}+${mailing_address::line2}+${mailing_address::city}+${mailing_address::province}+${mailing_address::post_code}+${correspondence_locale}))
 </code></pre>
 
 #### HTTP Status Codes
@@ -75,7 +75,7 @@ https://${host}/product/officepack/?ts=${epoch}&policyId=${policy_number}&locale
 
 // Signature
 
-base64(sha256(${psk}+${epoch}+${policy_number}+${locale}))
+base64(sha256hmac(${psk}, ${epoch}+${policy_number}+${locale}))
 </code></pre>
 
 ### HTTP Status Codes
