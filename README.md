@@ -74,6 +74,7 @@ encSig = base64(rawSig)
     <tr><td>insured_email</td><td>the insureds e-mail address.</td></tr>
     <tr><td>policy_number</td><td>the D&O policy number.</td></tr>
     <tr><td>customer_reference</td><td>the policy number bound by the broker.</td></tr>
+    <tr><td>inception_date</td><td>the inception date bound by the broker.</td></tr>
     <tr><td>expiry_date</td><td>the expiry date bound by the broker.</td></tr>
     <tr><td>address_line1</td><td>mailing address line 1.</td></tr>
     <tr><td>address_line2</td><td>mailing address line 2.</td></tr>
@@ -91,45 +92,31 @@ encSig = base64(rawSig)
 Method: POST
 
 <pre><code>
-https://${urlbase}?sig=${signature}
+https://${urlbase}?ts=${epoch}&sig=${signature}&v=1
 
 // Body
 {
-  “policy”: ${policy_number},
-  “first_name”: ${first_name},
-  “middle”: ${middle_name},
-  “surname”: ${surname},
-  "contact_details": {
-    { "type": "email", "contact": ${email}, "desc": "primary" },
-    { "type": "tel", "contact": ${business_telephone}, "desc": "business_telephone" },
-    { "type": "tel", "contact": ${business_fax}, "desc": "business_fax" }
+  “policy”: {
+    “number”: ${policy_number},
+    “inception”: ${inception_date},
+    “expiry”: ${expiry_date},
+    “insured": {
+      “reference”: ${customer_reference},
+      "policy_reference": ${policy_reference},
+      “fullname": ${insured_name},
+      “email": ${insured_email},
+      “mailing_address”: {
+        “line”: [${line1}, ${line2}],
+        “city”: ${city},
+        “province”: ${province},
+        “post_code”: ${post_code},
+        “country”: ${country},
+      }
+    }
   }
-  “insured_address”: {
-    “line1”: ${line1},
-    “line2”: ${line2},
-    “city”: ${city},
-    “province”: ${province},
-    “post_code”: ${post_code}
-  },
-  “mailing_address”: {
-    “line1”: ${line1},
-    “line2”: ${line2},
-    “city”: ${city},
-    “province”: ${province},
-    “post_code”: ${post_code}
-  },
-  “correspondence_locale”: ${correspondence_locale}
 }
 
 // signature
 
-base64(sha256hmac(${psk}, ${policy_number}+${first_name}+${middle}+${surname}+${email}+${business_telephone}+${business_fax}+${residential_address::line1}+${residential_address::line2}+${residential_address::city}+${residential_address::province}+${residential_address::post_code}+${mailing_address::line1}+${mailing_address::line2}+${mailing_address::city}+${mailing_address::province}+${mailing_address::post_code}+${correspondence_locale}))
+base64(sha256hmac(${psk}, ${city}+${country}+${customer_reference}+${expiry_date}+${inception_date}+${insured_email}+${insured_name}+${line1}+${line2}+${policy_number}+${policy_reference}+${post_code}+${province}))
 </code></pre>
-
-#### HTTP Post Status Codes
-
-* 201 Created - Reference data saved correctly.
-* 400 Bad Request - do not retry the pre shared key needs to be updated.
-* 410 Gone - session has expired do not retry.
-* 5xx Server Error - retry later.
-
