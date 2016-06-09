@@ -40,6 +40,10 @@ public class PolicyReference {
              (String) props.get("reference"));
     }
 
+    public PolicyReference() throws ParseException {
+       this(new LinkedHashMap<String, Object>());
+    }
+
     public PolicyReference(final String number,
                            final String timezone,
                            final Date inception,
