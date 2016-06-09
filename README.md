@@ -13,6 +13,8 @@
 <dl>
   <dt>Pre-shared key</dt>
   <dd>This is a key that is used to validate the authenicity of the request and should be treated as a private secret that only Markel and the broker have visibility of.</dd>
+  <dt>Signature</dt>
+  <dd>Signature allows a method by which values passed from one server can be verified on another to eliminate tampering.</dd>
 </dl>
 
 ## Security
@@ -32,7 +34,7 @@ https://${url_base}?sig=${signature}&ts=${epoch}&al0=${address_line1}&al1=${addr
 base64(sha256hmac(${psk}, "ts=${epoch}al0=${address_line1}al1=${address_line2}al2=${address_line3}al3=${address_line4}al4=${address_line5}ci=${city}cr=${customer_reference}em=${insured_email}ex=${expiry_date}in=${insured_name}pc=${postal_code}pn=${policy_number}pr=${province}"))
 </code></pre>
 
-All field keys are required in the signature but not required in the URL. Any fields not specified in the URL must default to an empty string as the value in the signature.
+All field keys are required in the signature but not required in the URL. Any fields not specified in the URL must default to an empty string as the value in the signature. With the exception of the timestamp, which is first. The fields are ordered by their keyname.
 
 Given the following inputs:
 
@@ -43,6 +45,7 @@ Given the following inputs:
       <th>Value</th>
     </tr>
   </thead>
+
   <tbody>
     <tr><td>psk</td><td>ABCDEFGHIJKLMNOPQRSTUVWXYZ123456</td></tr>
     <tr><td>insured_name</td><td>Nathan Fisher</td></tr>
@@ -61,6 +64,10 @@ rawSig = sha256hmac("ABCDEFGHIJKLMNOPQRSTUVWXYZ123456", input)
 encSig = base64(rawSig)
 </code></pre>
 
+Resulting in the following base64 value:
+
+``
+
 <table>
   <thead>
     <tr>
@@ -75,6 +82,8 @@ encSig = base64(rawSig)
     <tr><td>policy_number</td><td>the D&O policy number.</td></tr>
     <tr><td>customer_reference</td><td>the policy number bound by the broker.</td></tr>
     <tr><td>inception_date</td><td>the inception date bound by the broker.</td></tr>
+    <tr><td>policy_number</td><td>the D&O policyReference number.</td></tr>
+    <tr><td>customer_reference</td><td>the policyReference number bound by the broker.</td></tr>
     <tr><td>expiry_date</td><td>the expiry date bound by the broker.</td></tr>
     <tr><td>address_line1</td><td>mailing address line 1.</td></tr>
     <tr><td>address_line2</td><td>mailing address line 2.</td></tr>
