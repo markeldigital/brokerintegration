@@ -31,6 +31,14 @@ public class AddressTest {
     }
 
     @Test
+    public void compareTo_should_fail_on_line_mismatch() {
+        final Address expected = new Address("Toronto", "Canada", new String[]{"200 Wellington Street West", "Suite 40"}, "Ontario", "M5V 3C7");
+        final Address actual = new Address("Toronto", "Canada", new String[]{"200 Wellington Street West"}, "Ontario", "M5V 3C7");
+
+        assertThat(actual.compareTo(expected), is(1));
+    }
+
+    @Test
     public void compareTo_should_succeed_with_valid_address() throws IOException {
         final Address expected = new Address("Toronto", "Canada", new String[]{"200 Wellington Street West", "Suite 400"}, "Ontario", "M5V 3C7");
         final Address actual = DataFixtures.addressFixture();
