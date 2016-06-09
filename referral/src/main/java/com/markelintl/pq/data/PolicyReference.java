@@ -62,8 +62,6 @@ public class PolicyReference {
     }
 
     public int compareTo(final PolicyReference o) {
-        int r = 0;
-
         if (number.compareTo(o.number) != 0) return POLICY_NUMBER_MISMATCH;
         
         if (timezone.compareTo(o.timezone) != 0) return TIMEZONE_MISMATCH;

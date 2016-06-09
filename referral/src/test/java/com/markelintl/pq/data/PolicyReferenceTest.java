@@ -1,6 +1,5 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -58,7 +57,6 @@ public class PolicyReferenceTest {
         final Address address = new Address("Toronto", "Canada", new String[]{"200 Wellington Street West", "Suite 400"}, "Ontario", "M5V 3C7");
         final Insured insured = new Insured("CUST1234", "Nate Fisher", "noreply@example.net", address);
         final PolicyReference policy = new PolicyReference("PR1234", "EST", PolicyReference.parseDate("2016-01-01"), PolicyReference.parseDate("2017-01-01"), insured, "BR1234");
-        final ObjectMapper om = new ObjectMapper();
         final String json = PolicyReference.toJson(policy);
         final PolicyReference policy2 = PolicyReference.fromJson(json);
 
