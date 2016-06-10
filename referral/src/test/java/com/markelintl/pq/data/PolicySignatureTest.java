@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,5 +48,13 @@ public class PolicySignatureTest {
         assertThat(signature.length, is(32));
         assertThat(signature, is(equalTo(signature)));
         assertThat(signature, not(equalTo(signature2)));
+    }
+
+    @Test
+    public void sign_default_constructor() throws ParseException, NoSuchAlgorithmException, InvalidKeyException {
+        final PolicyReference policy = new PolicyReference();
+        final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");
+
+        assertThat(signer.signToBase64(1451606400000L, policy), is("op3v+JX4c0z+W5yVg/KRvqJiwpbQCipuOCNO8LsP9/0="));
     }
 }

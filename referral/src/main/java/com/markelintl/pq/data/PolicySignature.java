@@ -1,23 +1,25 @@
 package com.markelintl.pq.data;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
-class PolicySignature {
+public class PolicySignature {
     private final Charset charset = StandardCharsets.UTF_8;
-    private final String ALGORITHM = "HmacSHA256";
+    private static final String ALGORITHM = "HmacSHA256";
     private final SecretKeySpec key;
 
     public PolicySignature(final String psk) {
         this.key = new SecretKeySpec(charset.encode(psk).array(), ALGORITHM);
     }
 
-    public byte[] signPolicy(final long epoch, final PolicyReference policy) throws NoSuchAlgorithmException, InvalidKeyException {
+    public byte[] signPolicy(final long epoch,
+                             final PolicyReference policy)
+            throws NoSuchAlgorithmException, InvalidKeyException {
         StringBuilder sb = new StringBuilder();
         sb.append(epoch);
         sb.append(policy);
@@ -27,12 +29,17 @@ class PolicySignature {
         return mac.doFinal(charset.encode(sb.toString()).array());
     }
 
-    public String signToBase64(final long epoch, final PolicyReference policy) throws InvalidKeyException, NoSuchAlgorithmException {
+    public String signToBase64(final long epoch,
+                               final PolicyReference policy)
+            throws InvalidKeyException, NoSuchAlgorithmException {
         return DatatypeConverter.printBase64Binary(signPolicy(epoch, policy));
     }
 
-    public boolean verifyFromBase64(final long epoch, final PolicyReference policy, final String s) throws NoSuchAlgorithmException, InvalidKeyException {
-        final String sig = signToBase64(epoch, policy);
-        return sig.equals(s);
+    public boolean verifyFromBase64(final long epoch,
+                                    final PolicyReference policy,
+                                    final String signature)
+            throws NoSuchAlgorithmException, InvalidKeyException {
+        final String expectedSignature = signToBase64(epoch, policy);
+        return expectedSignature.equals(signature);
     }
 }

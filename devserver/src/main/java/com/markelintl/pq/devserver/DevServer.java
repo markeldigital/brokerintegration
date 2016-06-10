@@ -12,7 +12,7 @@ public class DevServer extends Application<DevServerConfiguration> {
 
     @Override
     public String getName() {
-       return "referral-stub";
+        return "referral-stub";
     }
 
     @Override
@@ -21,7 +21,8 @@ public class DevServer extends Application<DevServerConfiguration> {
     }
 
     @Override
-    public void run(DevServerConfiguration devServerConfiguration, Environment environment) throws Exception {
-        environment.jersey().register(new PolicyReferenceResource());
+    public void run(DevServerConfiguration config, Environment environment) throws Exception {
+
+        environment.jersey().register(new PolicyReferenceResource(config.getReferralToken()));
     }
 }

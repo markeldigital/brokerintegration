@@ -17,6 +17,25 @@
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>${pit.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <targetClasses>
+                                <param>com.markelintl.pq.data.*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>com.markelintl.pq.data.*</param>
+                            </targetTests>
+                        </configuration>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
                 <configuration>
                     <targetClasses>
                         <param>com.markelintl.pq.data.*</param>

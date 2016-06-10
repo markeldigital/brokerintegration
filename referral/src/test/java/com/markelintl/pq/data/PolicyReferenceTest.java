@@ -69,6 +69,23 @@ public class PolicyReferenceTest {
     public void serialisation_should_work_with_all_fields_missing() throws IOException {
         final PolicyReference pr = PolicyReference.fromJson("{}");
 
-        assertThat(pr.toString(), is("2017-01-012016-01-01"));
+        assertThat(pr.toString(), is("1970-01-011970-01-01"));
+    }
+
+    @Test
+    public void parseDate_should_work_with_both_numbers_and_dates() throws ParseException {
+        Object[] testData = {
+                "2016-01-01",
+                1451606400000L
+        };
+
+        for (Object td: testData) {
+           assertThat(PolicyReference.parseDate(td).getTime(), is(1451606400000L));
+        }
+    }
+
+    @Test //(expected = NumberFormatException.class)
+    public void parseDate_should_throw_a_parsing_exception_on_an_invalid_date() throws ParseException {
+        PolicyReference.parseDate("30000-04-01");
     }
 }

@@ -65,6 +65,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.markelintl.pq</groupId>
+            <artifactId>referral</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- junit: Eclipse Public License 1.0 -->
         <dependency>
             <groupId>junit</groupId>
@@ -72,10 +78,6 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.markelintl.pq</groupId>
-            <artifactId>referral</artifactId>
-            <version>0.0.0-SNAPSHOT</version>
-        </dependency>
+
     </dependencies>
 </project>
