@@ -1,7 +1,7 @@
 SHELL=/bin/sh
 
 .PHONY: all
-all: pit package
+all: package
 
 .PHONY: package
 package:
