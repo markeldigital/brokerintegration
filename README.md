@@ -52,92 +52,17 @@
 ## Terminology
 
 <dl>
-  <dt>Pre-shared key</dt>
-  <dd>This is a key that is used to validate the authenicity of the request and should be treated as a private secret that only Markel and the broker have visibility of.</dd>
+  <dt>Pre-shared key (PSK)</dt>
+  <dd>This is a key that is used to validate the authenicity of the request and should be treated as a private secret that only Markel and the broker have visibility of. It *MUST NOT* be made visible in the clients browser.</dd>
   <dt>Signature</dt>
-  <dd>Signature allows a method by which values passed from one server can be verified on another to eliminate tampering.</dd>
+  <dd>Signature is a token that is a computed value using the field values and the PSK. It is a method to transfer values between systems ensuring no intermediaries have tampered with the values.</dd>
 </dl>
 
 ## Security
 
 All data is to be transferred securely using HTTPS/TLS encryption between the broker and Markel's systems. Authenticating the data will be achieved using HMAC signing with a pre-shared key (PSK).
 
-## Quote Journey
-
-Method: GET
-
-<pre><code>
-https://${url_base}?sig=${signature}&ts=${epoch}&al0=${address_line1}&al1=${address_line2}&al2=${address_line3}&al3=${address_line4}&al4=${address_line5}&ci=${city}&cr=${customer_reference}&em=${insured_email}&ex=${expiry_date}&in=${insured_name}&pc=${postal_code}&pn=${policy_number}&pr=${province}
-
-
-// Signature
-
-base64(sha256hmac(${psk}, "ts=${epoch}al0=${address_line1}al1=${address_line2}al2=${address_line3}al3=${address_line4}al4=${address_line5}ci=${city}cr=${customer_reference}em=${insured_email}ex=${expiry_date}in=${insured_name}pc=${postal_code}pn=${policy_number}pr=${province}"))
-</code></pre>
-
-All field keys are required in the signature but not required in the URL. Any fields not specified in the URL must default to an empty string as the value in the signature. With the exception of the timestamp, which is first. The fields are ordered by their keyname.
-
-Given the following inputs:
-
-<table>
-  <thead>
-    <tr>
-      <th>Field</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr><td>psk</td><td>ABCDEFGHIJKLMNOPQRSTUVWXYZ123456</td></tr>
-    <tr><td>insured_name</td><td>Nathan Fisher</td></tr>
-    <tr><td>expiry</td><td>2017-01-1</td></tr>
-    <tr><td>customer_reference</td><td>1234</td></tr>
-    <tr><td>policy_number</td><td>3456</td></tr>
-    <tr><td>epoch</td><td>1463138046</td></tr>
-  </tbody>
-<table>
-
-The signature would be generated as follows:
-
-<pre><code>
-input = "ts=1463138046al0=al1=al2=al3=al4=ci=cr=1234em=ex=2017-01-01in=Nathan Fisherpc=pn=3456pr="
-rawSig = sha256hmac("ABCDEFGHIJKLMNOPQRSTUVWXYZ123456", input)
-encSig = base64(rawSig)
-</code></pre>
-
-Resulting in the following base64 value:
-
-``
-
-<table>
-  <thead>
-    <tr>
-      <th>Field</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>epoch</td><td>unix timestamp representing the time the URL was generated.</td></tr>
-    <tr><td>insured_name</td><td>the insureds full name.</td></tr>
-    <tr><td>insured_email</td><td>the insureds e-mail address.</td></tr>
-    <tr><td>policy_number</td><td>the D&O policy number.</td></tr>
-    <tr><td>customer_reference</td><td>the policy number bound by the broker.</td></tr>
-    <tr><td>inception_date</td><td>the inception date bound by the broker.</td></tr>
-    <tr><td>policy_number</td><td>the D&O policyReference number.</td></tr>
-    <tr><td>customer_reference</td><td>the policyReference number bound by the broker.</td></tr>
-    <tr><td>expiry_date</td><td>the expiry date bound by the broker.</td></tr>
-    <tr><td>address_line1</td><td>mailing address line 1.</td></tr>
-    <tr><td>address_line2</td><td>mailing address line 2.</td></tr>
-    <tr><td>address_line3</td><td>mailing address line 3.</td></tr>
-    <tr><td>address_line4</td><td>mailing address line 4.</td></tr>
-    <tr><td>address_line5</td><td>mailing address line 5.</td></tr>
-    <tr><td>city</td><td>mailing city.</td></tr>
-    <tr><td>province</td><td>mailing province.</td></tr>
-    <tr><td>postal_code</td><td>mailing postcode.</td></tr>
-  </tbody>
-</table>
-
-### Asynchronous User Data Transfer
+### JSON POST
 
 Method: POST
 
@@ -146,27 +71,26 @@ https://${urlbase}?ts=${epoch}&sig=${signature}&v=1
 
 // Body
 {
-  “policy”: {
-    “number”: ${policy_number},
-    “inception”: ${inception_date},
-    “expiry”: ${expiry_date},
-    “insured": {
-      “reference”: ${customer_reference},
-      "policy_reference": ${policy_reference},
-      “fullname": ${insured_name},
-      “email": ${insured_email},
-      “mailing_address”: {
-        “line”: [${line1}, ${line2}],
-        “city”: ${city},
-        “province”: ${province},
-        “post_code”: ${post_code},
-        “country”: ${country},
-      }
+    "number": ${policy_number},
+    "timezone": ${timezone},
+    "reference": ${policy_reference_number},
+    "expiry": ${policy_expiry},
+    "inception": ${policy_inception},
+    "insured":{
+        "reference": ${customer_reference_number},
+        "fullname": ${customer_fullname},
+        "email": ${customer_email},
+        "mailingAddress":{
+            "city": ${customer_mailing_city},
+            "country": ${customer_mailing_country},
+            "lines":[${customer_mailing_line_0},${customer_mailing_line_1},...],
+            "province":${customer_mailing_province},
+            "postcode": ${customer_mailing_postcode}
+        }
     }
-  }
 }
 
 // signature
 
-base64(sha256hmac(${psk}, ${city}+${country}+${customer_reference}+${expiry_date}+${inception_date}+${insured_email}+${insured_name}+${line1}+${line2}+${policy_number}+${policy_reference}+${post_code}+${province}))
+base64(sha256hmac(${psk}, ${customer_mailing_city}+${customer_mailing_country}+${customer_reference_number}+${policy_expiry}+${policy_inception}+${customer_email}+${customer_fullname}+${customer_mailing_line_0}+${customer_mailing_line_1}+${policy_number}+${policy_reference_number}+${customer_mailing_postcode}+${customer_mailing_province}))
 </code></pre>
