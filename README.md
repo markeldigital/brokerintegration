@@ -2,6 +2,45 @@
 
 [![Build Status](https://travis-ci.org/markeldigital/brokerintegration.svg?branch=master)](https://travis-ci.org/markeldigital/brokerintegration)
 
+## Dev Server Setup
+
+### Dependencies
+
+- Oracle JDK (>= 1.7)
+- Maven (>= 3.3.9)
+
+### Running
+
+1. GIT Clone the repository located at: https://github.com/markeldigital/brokerintegration.git.
+2. Go to the root folder of the newly cloned repository.
+3. Execute `mvn package`.
+4. Execute `java -jar devserver/target/devserver-0.0.0-SNAPSHOT.jar server`.
+5. Connect to the running service by making a request to: http://localhost:8080/policy-reference.
+6. You should see something like the following:
+
+```javascript
+{
+    "number":"",
+    "timezone":"UTC",
+    "reference":"",
+    "expiry":0,
+    "inception":0,
+    "insured":{
+        "reference":"",
+        "fullname":"",
+        "email":"",
+        "mailingAddress":{
+            "city":"",
+            "country":"",
+            "lines":[],
+            "province":"",
+            "postcode":""
+        }
+    }
+}
+```
+
+
 ## User Flow
 
 ![Quote Journeys](QuoteJourneys.png)
@@ -21,7 +60,7 @@
 
 ## Security
 
-All data is to be transferred securely using HTTPS/TLS encryption between the broker and Markel's systems. Authenticating the data will be achieved using HMAC signing with a 32 character pre-shared key (PSK).
+All data is to be transferred securely using HTTPS/TLS encryption between the broker and Markel's systems. Authenticating the data will be achieved using HMAC signing with a pre-shared key (PSK).
 
 ## Quote Journey
 
