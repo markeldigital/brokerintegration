@@ -2,7 +2,6 @@ package com.markelintl.pq.devserver.resources;
 
 import com.markelintl.pq.data.PolicyReference;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import org.glassfish.jersey.client.ClientResponse;
 import org.junit.ClassRule;
 import org.junit.Test;
 

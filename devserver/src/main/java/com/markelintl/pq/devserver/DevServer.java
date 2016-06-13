@@ -22,7 +22,6 @@ public class DevServer extends Application<DevServerConfiguration> {
 
     @Override
     public void run(DevServerConfiguration config, Environment environment) throws Exception {
-
         environment.jersey().register(new PolicyReferenceResource(config.getReferralToken()));
     }
 }

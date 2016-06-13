@@ -78,4 +78,36 @@ public final class Insured {
 
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Insured insured = (Insured) obj;
+
+        if (!reference.equals(insured.reference)) {
+            return false;
+        }
+        if (!fullname.equals(insured.fullname)) {
+            return false;
+        }
+        if (!email.equals(insured.email)) {
+            return false;
+        }
+        return mailingAddress.equals(insured.mailingAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = reference.hashCode();
+        result = 31 * result + fullname.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + mailingAddress.hashCode();
+        return result;
+    }
 }

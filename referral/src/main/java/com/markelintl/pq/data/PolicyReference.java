@@ -115,6 +115,47 @@ public final class PolicyReference {
         return om.readValue(json, PolicyReference.class);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        PolicyReference that = (PolicyReference) obj;
+
+        if (!number.equals(that.number)) {
+            return false;
+        }
+        if (!timezone.equals(that.timezone)) {
+            return false;
+        }
+        if (!reference.equals(that.reference)) {
+            return false;
+        }
+        if (!expiry.equals(that.expiry)) {
+            return false;
+        }
+        if (!inception.equals(that.inception)) {
+            return false;
+        }
+        return insured.equals(that.insured);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = number.hashCode();
+        result = 31 * result + timezone.hashCode();
+        result = 31 * result + reference.hashCode();
+        result = 31 * result + expiry.hashCode();
+        result = 31 * result + inception.hashCode();
+        result = 31 * result + insured.hashCode();
+        return result;
+    }
+
     public String toString() {
         final DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 

@@ -90,6 +90,43 @@ public final class Address {
         return 0;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Address address = (Address) obj;
+
+        if (!city.equals(address.city)) {
+            return false;
+        }
+        if (!country.equals(address.country)) {
+            return false;
+        }
+        if (!lines.equals(address.lines)) {
+            return false;
+        }
+        if (!province.equals(address.province)) {
+            return false;
+        }
+        return postcode.equals(address.postcode);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = city.hashCode();
+        result = 31 * result + country.hashCode();
+        result = 31 * result + lines.hashCode();
+        result = 31 * result + province.hashCode();
+        result = 31 * result + postcode.hashCode();
+        return result;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
