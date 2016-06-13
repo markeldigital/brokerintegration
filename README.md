@@ -11,6 +11,8 @@
 
 ### Running
 
+**Note**: The default PSK is "qwerty1234"
+
 1. GIT Clone the repository located at: https://github.com/markeldigital/brokerintegration.git.
 2. Go to the root folder of the newly cloned repository.
 3. Execute `mvn package`.
