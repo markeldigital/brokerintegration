@@ -14,7 +14,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class PolicySignatureTest {
     @Test
-    public void verifyFromBase64_should_pass_when_valid_signature() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public void verifyFromBase64_should_pass_when_valid_signature() throws IOException, InvalidKeyException, NoSuchAlgorithmException, ParseException {
         final PolicyReference policy = DataFixtures.policyFixture();
         final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");
 
@@ -22,7 +22,7 @@ public class PolicySignatureTest {
     }
 
     @Test
-    public void verifyFromBase64_should_fail_when_invalid_signature() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public void verifyFromBase64_should_fail_when_invalid_signature() throws IOException, InvalidKeyException, NoSuchAlgorithmException, ParseException {
         final PolicyReference policy = DataFixtures.policyFixture();
         final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");
 
@@ -30,7 +30,7 @@ public class PolicySignatureTest {
     }
 
     @Test
-    public void signToBase64_should_return_an_encoded_signature() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public void signToBase64_should_return_an_encoded_signature() throws IOException, NoSuchAlgorithmException, InvalidKeyException, ParseException {
         final PolicyReference policy = DataFixtures.policyFixture();
         final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");
         final String encodedSignature = signer.signToBase64(1234, policy);
@@ -39,7 +39,7 @@ public class PolicySignatureTest {
     }
 
     @Test
-    public void sign_should_return_different_signature_with_change_in_timestamp() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public void sign_should_return_different_signature_with_change_in_timestamp() throws IOException, InvalidKeyException, NoSuchAlgorithmException, ParseException {
         final PolicyReference policy = DataFixtures.policyFixture();
         final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");
         byte[] signature = signer.signPolicy(0, policy);

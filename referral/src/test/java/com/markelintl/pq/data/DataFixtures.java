@@ -1,8 +1,9 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
+import java.text.ParseException;
+
+import static com.markelintl.pq.data.PolicyReference.parseDate;
 
 public class DataFixtures {
     public static final String VALID_ADDRESS_FIXTURE = "{" +
@@ -30,17 +31,22 @@ public class DataFixtures {
             "}";
 
     public static Address addressFixture() throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        return om.readValue(VALID_ADDRESS_FIXTURE, Address.class);
+        final Address address = new Address("Toronto", "Canada", new String[]{ "200 Wellington Street West", "Suite 400" }, "Ontario", "M5V 3C7");
+        return address;
     }
 
     public static Insured insuredFixture() throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        return om.readValue(VALID_INSURED_FIXTURE, Insured.class);
+        final Insured insured = new Insured("CUST1234", "Nate Fisher", "noreply@example.net", addressFixture());
+        return insured;
     }
 
-    public static PolicyReference policyFixture() throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        return om.readValue(VALID_POLICY_FIXTURE, PolicyReference.class);
+    public static PolicyReference policyFixture() throws IOException, ParseException {
+        final PolicyReference policyReference = new PolicyReference("PR1234",
+                "EST",
+                parseDate("2016-01-01"),
+                parseDate("2017-01-01"),
+                insuredFixture(),
+                "BR1234");
+        return policyReference;
     }
 }

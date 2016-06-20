@@ -6,13 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public final class PolicyReference {
     public static final int POLICY_NUMBER_MISMATCH = 1;
@@ -21,7 +21,12 @@ public final class PolicyReference {
     public static final int EXPIRY_MISMATCH = 8;
     public static final int POLICY_REFERENCE_MISMATCH = 16;
     public static final int INSURED_MISMATCH = 32;
+    public static final TimeZone WIRE_TIMEZONE = TimeZone.getTimeZone("GMT");
     static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd");
+
+    static {
+        DATE_FMT.setTimeZone(WIRE_TIMEZONE);
+    }
 
     public final String number;
     public final String timezone;
@@ -33,12 +38,12 @@ public final class PolicyReference {
     @JsonCreator
     public PolicyReference(Map<String, Object> props) throws ParseException {
         this((String) props.get("number"),
-             (String) props.get("timezone"),
-             parseDate(props.get("inception")),
-             parseDate(props.get("expiry")),
-             new Insured(Optional.fromNullable((Map<String, Object>) props.get("insured"))
+                (String) props.get("timezone"),
+                parseDate(props.get("inception")),
+                parseDate(props.get("expiry")),
+                new Insured(Optional.fromNullable((Map<String, Object>) props.get("insured"))
                      .or(new LinkedHashMap<String, Object>())),
-             (String) props.get("reference"));
+                (String) props.get("reference"));
     }
 
     public PolicyReference() throws ParseException {
@@ -52,9 +57,9 @@ public final class PolicyReference {
                            final Insured insured,
                            final String reference) {
         this.number = Optional.fromNullable(number).or("");
-        this.timezone = Optional.fromNullable(timezone).or("UTC");
         this.inception = Optional.fromNullable(inception).or(new Date());
         this.expiry = Optional.fromNullable(expiry).or(new Date());
+        this.timezone = Optional.fromNullable(timezone).or(WIRE_TIMEZONE.getID());
         this.insured = Optional.fromNullable(insured).or(new Insured());
         this.reference = Optional.fromNullable(reference).or("");
     }
@@ -62,7 +67,7 @@ public final class PolicyReference {
     public static Date parseDate(final Object dateObj)
             throws ParseException, NumberFormatException {
         final Calendar cal = Calendar.getInstance();
-        final String re = "^20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]$";
+        cal.setTimeZone(WIRE_TIMEZONE);
 
         if (String.class.isInstance(dateObj)) {
             cal.setTime(DATE_FMT.parse((String) dateObj));
@@ -72,6 +77,13 @@ public final class PolicyReference {
         }
 
         return new Date(0);
+    }
+
+    public static Date parseDate(final String dateStr, final String timezone)
+            throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
+        return dateFormat.parse(dateStr);
     }
 
     public int compareTo(final PolicyReference otherPolicyReference) {
@@ -120,6 +132,7 @@ public final class PolicyReference {
         if (this == obj) {
             return true;
         }
+
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
@@ -157,15 +170,13 @@ public final class PolicyReference {
     }
 
     public String toString() {
-        final DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-
         StringBuilder sb = new StringBuilder();
 
         sb.append(insured.mailingAddress.city);
         sb.append(insured.mailingAddress.country);
         sb.append(insured.reference);
-        sb.append(fmt.format(expiry));
-        sb.append(fmt.format(inception));
+        sb.append(DATE_FMT.format(expiry));
+        sb.append(DATE_FMT.format(inception));
         sb.append(insured.email);
         sb.append(insured.fullname);
 
