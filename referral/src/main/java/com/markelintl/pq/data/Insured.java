@@ -110,4 +110,40 @@ public final class Insured {
         result = 31 * result + mailingAddress.hashCode();
         return result;
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        final Map<String, Object> map = new HashMap<>();
+
+        public Builder withFullname(final String fullname) {
+            map.put("fullname", fullname);
+            return this;
+        }
+
+        public Builder withReference(final String reference) {
+            map.put("reference", reference);
+            return this;
+        }
+
+        public Builder withEmail(final String email) {
+            map.put("email", email);
+            return this;
+        }
+
+        public Builder withMailingAddress(final Map<String, Object> mailingAddress) {
+            map.put("mailingAddress", mailingAddress);
+            return this;
+        }
+
+        public Insured build() {
+            return new Insured(map);
+        }
+
+        public Map<String, Object> buildMap() {
+            return map;
+        }
+    }
 }

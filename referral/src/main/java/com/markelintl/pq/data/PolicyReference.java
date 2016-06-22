@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -70,8 +71,13 @@ public final class PolicyReference {
         cal.setTimeZone(WIRE_TIMEZONE);
 
         if (String.class.isInstance(dateObj)) {
-            cal.setTime(DATE_FMT.parse((String) dateObj));
-            return cal.getTime();
+            final String date = (String) dateObj;
+            if (date.matches("^\\d+$")) {
+                return new Date(Long.parseLong(date));
+            } else {
+                cal.setTime(DATE_FMT.parse(date));
+                return cal.getTime();
+            }
         } else if (Long.class.isInstance(dateObj)) {
             return new Date((Long) dateObj);
         }
@@ -190,5 +196,47 @@ public final class PolicyReference {
         sb.append(insured.mailingAddress.province);
 
         return sb.toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        final Map<String, Object> map = new HashMap<String, Object>();
+
+        public Builder withExpiry(final String expiry) {
+            map.put("expiry", expiry);
+            return this;
+        }
+
+        public Builder withInception(final String inception) {
+            map.put("inception", inception);
+            return this;
+        }
+
+        public Builder withInsured(final Map<String, Object> insured) {
+            map.put("insured", insured);
+            return this;
+        }
+
+        public Builder withPolicyNumber(final String policyNumber) {
+            map.put("number", policyNumber);
+            return this;
+        }
+
+        public Builder withPolicyReference(final String policyReference) {
+            map.put("reference", policyReference);
+            return this;
+        }
+
+        public Builder withTimezone(final String timezone) {
+            map.put("timezone", timezone);
+            return this;
+        }
+
+        public PolicyReference build() throws ParseException {
+            return new PolicyReference(map);
+        }
     }
 }

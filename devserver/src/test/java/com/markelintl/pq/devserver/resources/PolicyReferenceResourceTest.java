@@ -6,6 +6,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.text.ParseException;
@@ -23,15 +24,36 @@ public class PolicyReferenceResourceTest {
                          final String timestamp,
                          final String version,
                          final String signature) {
+        Form form = new Form();
+
+        form.param("policyNumber", pr.number)
+            .param("policyReference", pr.reference)
+            .param("timeZone", pr.timezone)
+            .param("insuredName", pr.insured.fullname)
+            .param("insuredReference", pr.insured.reference)
+            .param("insuredEmail", pr.insured.email)
+            .param("insuredMailingCity", pr.insured.mailingAddress.city)
+            .param("insuredMailingProvince", pr.insured.mailingAddress.province)
+            .param("insuredMailingPostcode", pr.insured.mailingAddress.postcode)
+            .param("insuredMailingCountry", pr.insured.mailingAddress.country)
+        ;
+
+        form.param("inception", String.valueOf(pr.inception.getTime()))
+            .param("expiry", String.valueOf(pr.expiry.getTime()));
+
+        for (String line : pr.insured.mailingAddress.lines) {
+            form.param("insuredMailingLines", line);
+        }
+
         Response resp = resources.client()
                 .target(PolicyReferenceResource.PATH)
                 .queryParam("ts", timestamp)
                 .queryParam("v", version)
                 .queryParam("sig", signature)
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(pr));
+                .request(MediaType.APPLICATION_FORM_URLENCODED)
+                .post(Entity.form(form));
 
-        assertThat("ts = " + timestamp + ", v = " + version + ", sig = " + timestamp,
+        assertThat("ts = " + timestamp + ", v = " + version + ", sig = " + signature,
                 resp.getStatus(),
                 is(200));
 

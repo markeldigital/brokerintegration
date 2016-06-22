@@ -140,4 +140,45 @@ public final class Address {
 
         return sb.toString();
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        final HashMap<String, Object> map = new HashMap<>();
+
+        public Builder withCity(final String city) {
+            map.put("city", city);
+            return this;
+        }
+
+        public Builder withCountry(final String country) {
+            map.put("country", country);
+            return this;
+        }
+
+        public Builder withLines(final List<String> lines) {
+            map.put("lines", lines);
+            return this;
+        }
+
+        public Builder withPostcode(final String postcode) {
+            map.put("postcode", postcode);
+            return this;
+        }
+
+        public Builder withProvince(final String province) {
+            map.put("province", province);
+            return this;
+        }
+
+        public Address build() {
+            return new Address(map);
+        }
+
+        public Map<String,Object> buildMap() {
+            return map;
+        }
+    }
 }
