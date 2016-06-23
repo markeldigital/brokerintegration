@@ -1,0 +1,91 @@
+<!doctype html>
+<head>
+  <title>Sample Referal Form</title>
+  <style>
+label {
+  display:inline-block;
+  margin-right:0.25rem;
+  text-align:right;
+  width:10rem;
+}
+  </style>
+</head>
+<body>
+  <h1>Policy Reference</h1>
+
+  <form method="POST" action="http://localhost:8080/policy-reference?v=1&sig=nrMr14aEnUDrnagDUWBRJHrpCw7b%2Fwuwe%2BYcy85NREk%3D&ts=1234">
+    <p>
+      <label for="policyNumber">policyNumber</label>
+      <input type="text" name="policyNumber" id="policyNumber" value="PR1234"/>
+    </p>
+
+    <p>
+      <label for="policyReference">policyReference</label>
+      <input type="text" name="policyReference" id="policyReference" value="BR1234"/>
+    </p>
+
+    <p>
+      <label for="timeZone">timezone</label>
+      <input type="text" name="timeZone" id="timeZone" value="EST"/> 
+    </p>
+
+    <p>
+      <label for="inception">inception</label>
+      <input type="text" name="inception" id="inception" value="2016-01-01"/> 
+    </p>
+
+    <p>
+      <label for="expiry">expiry</label>
+      <input type="text" name="expiry" id="expiry" value="2017-01-01"/> 
+    </p>
+
+    <p>
+      <label for="insuredName">insuredName</label>
+      <input type="text" name="insuredName" id="insuredName" value="Nate Fisher"/>
+    </p>
+
+    <p>
+      <label for="insuredReference">insuredReference</label>
+      <input type="text" name="insuredReference" id="insuredReference" value="CUST1234"/>
+    </p>
+
+    <p>
+      <label for="insuredEmail">insuredEmail</label>
+      <input type="text" name="insuredEmail" id="insuredEmail" value="noreply@example.net"/>
+    </p>
+
+    <p>
+      <label for="insuredMailingCity">insuredMailingCity</label>
+      <input type="text" name="insuredMailingCity" id="insuredMailingCity" value="Toronto"/>
+    </p>
+
+    <p>
+      <label for="insuredMailingProvince">insuredMailingProvince</label>
+      <input type="text" name="insuredMailingProvince" id="insuredMailingProvince" value="Ontario"/>
+    </p>
+
+    <p>
+      <label for="insuredMailingPostcode">insuredMailingPostcode</label>
+      <input type="text" name="insuredMailingPostcode" id="insuredMailingPostcode" value="M5V 3C7"/>
+    </p>
+
+    <p>
+      <label for="insuredMailingCountry">insuredMailingCountry</label>
+      <input type="text" name="insuredMailingCountry" id="insuredMailingCountry" value="Canada"/>
+    </p>
+
+    <p>
+      <label for="insuredMailingLines0">insuredMailingLines[0]</label>
+      <input type="text" name="insuredMailingLines" id="insuredMailingLines0" value="200 Wellington Street West"/>
+    </p>
+
+    <p>
+      <label for="insuredMailingLines1">insuredMailingLines[1]</label>
+      <input type="text" name="insuredMailingLines" id="insuredMailingLines1" value="Suite 400"/>
+    </p>
+
+    <p>
+      <input type="submit" value="Submit"/>
+    </p>
+  </form>
+</body>

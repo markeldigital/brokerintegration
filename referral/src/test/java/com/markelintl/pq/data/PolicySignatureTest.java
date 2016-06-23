@@ -22,6 +22,15 @@ public class PolicySignatureTest {
     }
 
     @Test
+    public void verifyFromBase64_should_pass_when_valid_signature_and_default_key() throws IOException, InvalidKeyException, NoSuchAlgorithmException, ParseException {
+        final PolicyReference policy = DataFixtures.policyFixture();
+        final PolicySignature signer = new PolicySignature("qwerty1234");
+
+        assertThat(signer.signToBase64(1234, policy), is("nrMr14aEnUDrnagDUWBRJHrpCw7b/wuwe+Ycy85NREk="));
+        assertThat(signer.verifyFromBase64(1234, policy, "nrMr14aEnUDrnagDUWBRJHrpCw7b/wuwe+Ycy85NREk="), is(true));
+    }
+
+    @Test
     public void verifyFromBase64_should_fail_when_invalid_signature() throws IOException, InvalidKeyException, NoSuchAlgorithmException, ParseException {
         final PolicyReference policy = DataFixtures.policyFixture();
         final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");

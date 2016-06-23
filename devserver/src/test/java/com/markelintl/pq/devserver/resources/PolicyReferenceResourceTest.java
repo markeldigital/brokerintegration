@@ -5,13 +5,14 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import java.text.ParseException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 public class PolicyReferenceResourceTest {
@@ -88,7 +89,7 @@ public class PolicyReferenceResourceTest {
             final Response resp = postRequest(pr, td[0], td[1], td[2]);
             final String body = resp.readEntity(String.class);
 
-            assertThat("td[" + i + "]", body, is(td[3]));
+            assertThat("td[" + i + "]", body, startsWith(td[3]));
             i++;
         }
     }

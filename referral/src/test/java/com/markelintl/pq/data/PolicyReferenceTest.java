@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.TimeZone;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -14,7 +13,7 @@ public class PolicyReferenceTest {
     @Test
     public void compareTo_should_serialize_valid_insured() throws IOException, ParseException {
         final PolicyReference expected = new PolicyReference("PR1234", "EST", PolicyReference.parseDate("2016-01-01"), PolicyReference.parseDate("2017-01-01"), DataFixtures.insuredFixture(), "BR1234");
-        final PolicyReference fixture = DataFixtures.policyFixture();
+        final PolicyReference fixture = PolicyReference.fromJson(DataFixtures.VALID_POLICY_FIXTURE);
 
         assertThat(fixture.compareTo(expected), is(0));
     }

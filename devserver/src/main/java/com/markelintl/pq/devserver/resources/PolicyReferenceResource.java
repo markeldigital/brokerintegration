@@ -100,12 +100,14 @@ public class PolicyReferenceResource {
         }
 
         boolean valid;
+        String b64;
 
         if (!version.or(0).equals(1)) {
             return UNKNOWN_VERSION;
         }
 
         try {
+            b64 = signer.signToBase64(timestamp.or(0L), policy);
             valid = signer.verifyFromBase64(timestamp.or(0L), policy, signature.or("1234"));
         } catch (final NoSuchAlgorithmException nsae) {
             return SIGNATURE_INVALID;
@@ -117,6 +119,7 @@ public class PolicyReferenceResource {
             return SIGNATURE_OK;
         }
 
-        return SIGNATURE_INVALID;
+        return SIGNATURE_INVALID + ", ref=" + policy.toString()
+                + ", b64=" + b64 + ", ts=" + timestamp.or(0L);
     }
 }
