@@ -43,8 +43,8 @@ public class DataFixtures {
     public static PolicyReference policyFixture() throws IOException, ParseException {
         final PolicyReference policyReference = new PolicyReference("PR1234",
                 "EST",
-                parseDate("2016-01-01"),
-                parseDate("2017-01-01"),
+                parseDate("2016-01-01", "EST"),
+                parseDate("2017-01-01", "EST"),
                 insuredFixture(),
                 "BR1234");
         return policyReference;

@@ -3,17 +3,19 @@ package com.markelintl.pq.data;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Optional;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 public final class PolicyReference {
     public static final int POLICY_NUMBER_MISMATCH = 1;
@@ -22,28 +24,25 @@ public final class PolicyReference {
     public static final int EXPIRY_MISMATCH = 8;
     public static final int POLICY_REFERENCE_MISMATCH = 16;
     public static final int INSURED_MISMATCH = 32;
-    public static final TimeZone WIRE_TIMEZONE = TimeZone.getTimeZone("GMT");
-    static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd");
-
-    static {
-        DATE_FMT.setTimeZone(WIRE_TIMEZONE);
-    }
 
     public final String number;
     public final String timezone;
     public final String reference;
-    public final Date expiry;
-    public final Date inception;
+    public final LocalDate expiry;
+    public final LocalDate inception;
     public final Insured insured;
 
     @JsonCreator
     public PolicyReference(Map<String, Object> props) throws ParseException {
         this((String) props.get("number"),
                 (String) props.get("timezone"),
-                parseDate(props.get("inception")),
-                parseDate(props.get("expiry")),
-                new Insured(Optional.fromNullable((Map<String, Object>) props.get("insured"))
-                     .or(new LinkedHashMap<String, Object>())),
+                parseDate(props.get("inception"), Optional
+                        .fromNullable((String)props.get("timezone")).or("GMT")),
+                parseDate(props.get("expiry"), Optional
+                        .fromNullable((String)props.get("timezone")).or("GMT")),
+                new Insured((Map<String, Object>) Optional
+                        .fromNullable(props.get("insured"))
+                        .or(new HashMap<String, Object>())),
                 (String) props.get("reference"));
     }
 
@@ -53,43 +52,43 @@ public final class PolicyReference {
 
     public PolicyReference(final String number,
                            final String timezone,
-                           final Date inception,
-                           final Date expiry,
+                           final LocalDate inception,
+                           final LocalDate expiry,
                            final Insured insured,
                            final String reference) {
+
         this.number = Optional.fromNullable(number).or("");
-        this.inception = Optional.fromNullable(inception).or(new Date());
-        this.expiry = Optional.fromNullable(expiry).or(new Date());
-        this.timezone = Optional.fromNullable(timezone).or(WIRE_TIMEZONE.getID());
+        this.timezone = Optional.fromNullable(timezone).or("GMT");
+        this.inception = Optional.fromNullable(inception).or(new LocalDate());
+        this.expiry = Optional.fromNullable(expiry).or(new LocalDate());
         this.insured = Optional.fromNullable(insured).or(new Insured());
         this.reference = Optional.fromNullable(reference).or("");
     }
 
-    public static Date parseDate(final Object dateObj)
-            throws ParseException, NumberFormatException {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(WIRE_TIMEZONE);
+    public static LocalDate parseDate(final Object dateObj, final String timezone)
+            throws ParseException {
+        final DateTimeZone dtz = DateTimeZone.forID(timezone == "" ? "GMT" : timezone);
+        final DateTimeFormatter dateFmt = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(dtz);
 
         if (String.class.isInstance(dateObj)) {
-            final String date = (String) dateObj;
-            if (date.matches("^\\d+$")) {
-                return new Date(Long.parseLong(date));
-            } else {
-                cal.setTime(DATE_FMT.parse(date));
-                return cal.getTime();
-            }
+            return parseDate((String) dateObj, dateFmt);
         } else if (Long.class.isInstance(dateObj)) {
-            return new Date((Long) dateObj);
+            return parseDate((Long) dateObj, dtz);
         }
 
-        return new Date(0);
+        return new LocalDate(0L, dtz);
     }
 
-    public static Date parseDate(final String dateStr, final String timezone)
-            throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
-        return dateFormat.parse(dateStr);
+    private static LocalDate parseDate(final Long dateObj, final DateTimeZone dtz) {
+        final LocalDate dt = new LocalDate(dateObj, dtz);
+        return dt;
+    }
+
+    private static LocalDate parseDate(String dateObj, DateTimeFormatter dateFmt) {
+        final String dateStr = dateObj;
+        final LocalDate date = dateFmt.parseLocalDate(dateStr);
+
+        return date;
     }
 
     public int compareTo(final PolicyReference otherPolicyReference) {
@@ -123,13 +122,13 @@ public final class PolicyReference {
     public static String toJson(final PolicyReference policyReference)
             throws JsonProcessingException {
         final ObjectMapper om = new ObjectMapper();
-        om.setDateFormat(DATE_FMT);
+        om.registerModule(new JodaModule());
+        om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return om.writeValueAsString(policyReference);
     }
 
     public static PolicyReference fromJson(final String json) throws IOException {
         final ObjectMapper om = new ObjectMapper();
-        om.setDateFormat(DATE_FMT);
         return om.readValue(json, PolicyReference.class);
     }
 
@@ -178,22 +177,23 @@ public final class PolicyReference {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(insured.mailingAddress.city);
-        sb.append(insured.mailingAddress.country);
-        sb.append(insured.reference);
-        sb.append(DATE_FMT.format(expiry));
-        sb.append(DATE_FMT.format(inception));
-        sb.append(insured.email);
-        sb.append(insured.fullname);
+        sb.append(insured.mailingAddress.city)
+                .append(insured.mailingAddress.country)
+                .append(insured.reference)
+                .append(timezone)
+                .append(expiry)
+                .append(inception)
+                .append(insured.email)
+                .append(insured.fullname);
 
         for (int i = 0; i < insured.mailingAddress.lines.size(); i++) {
             sb.append(insured.mailingAddress.lines.get(i));
         }
 
-        sb.append(number);
-        sb.append(reference);
-        sb.append(insured.mailingAddress.postcode);
-        sb.append(insured.mailingAddress.province);
+        sb.append(number)
+                .append(reference)
+                .append(insured.mailingAddress.postcode)
+                .append(insured.mailingAddress.province);
 
         return sb.toString();
     }

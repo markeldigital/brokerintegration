@@ -39,8 +39,8 @@ public class PolicyReferenceResourceTest {
             .param("insuredMailingCountry", pr.insured.mailingAddress.country)
         ;
 
-        form.param("inception", String.valueOf(pr.inception.getTime()))
-            .param("expiry", String.valueOf(pr.expiry.getTime()));
+        form.param("inception", String.valueOf(pr.inception))
+            .param("expiry", String.valueOf(pr.expiry));
 
         for (String line : pr.insured.mailingAddress.lines) {
             form.param("insuredMailingLines", line);
@@ -62,24 +62,13 @@ public class PolicyReferenceResourceTest {
     }
 
     @Test
-    public void valid_signed_policy_reference_should_succeed() throws ParseException {
-        final PolicyReference pr = new PolicyReference();
-        final Response resp = postRequest(pr, "1451606400000", "1", "op3v+JX4c0z+W5yVg/KRvqJiwpbQCipuOCNO8LsP9/0=");
-        final String body = resp.readEntity(String.class);
-
-        assertThat(body, is(PolicyReferenceResource.SIGNATURE_OK));
-    }
-
-    @Test
-    public void invalid_signed_policy_reference_should_fail() throws ParseException {
+    public void posting_a_minimal_policy_via_urlencoded_form() throws ParseException {
         String[][] testData = {
-                // ts, version, signature, result
-                // incorrect timestamp
-                {"145160640000", "1", "op3v+JX4c0z+W5yVg/KRvqJiwpbQCipuOCNO8LsP9/0=", PolicyReferenceResource.SIGNATURE_INVALID},
-                // invalid version
-                {"1451606400000", "2", "op3v+JX4c0z+W5yVg/KRvqJiwpbQCipuOCNO8LsP9/0=", PolicyReferenceResource.UNKNOWN_VERSION},
-                // incorrect key
-                {"1451606200000", "1", "Crapop3v+JX4c0z+W5yVg/KRvqJiwpbQCipuOCNO8LsP9/0=", PolicyReferenceResource.SIGNATURE_INVALID},
+                // ts, version, signature, result, failure notice
+                {"1234", "1", "R7B9SvkaQgU+TwH72U+5yxzrugfp/Otpr+7oH7wLpZg=", PolicyReferenceResource.SIGNATURE_OK, "should have valid signature"},
+                {"12345", "1", "R7B9SvkaQgU+TwH72U+5yxzrugfp/Otpr+7oH7wLpZg=", PolicyReferenceResource.SIGNATURE_INVALID, "should fail with a timestamp signature mismatch"},
+                {"1234", "2", "R7B9SvkaQgU+TwH72U+5yxzrugfp/Otpr+7oH7wLpZg=", PolicyReferenceResource.UNKNOWN_VERSION, "should fail with unknown version"},
+                {"1234", "1", "CrapR7B9SvkaQgU+TwH72U+5yxzrugfp/Otpr+7oH7wLpZg=", PolicyReferenceResource.SIGNATURE_INVALID, "should fail with mismatched key"},
         };
 
         final PolicyReference pr = new PolicyReference();
@@ -89,7 +78,7 @@ public class PolicyReferenceResourceTest {
             final Response resp = postRequest(pr, td[0], td[1], td[2]);
             final String body = resp.readEntity(String.class);
 
-            assertThat("td[" + i + "]", body, startsWith(td[3]));
+            assertThat(td[4], body, startsWith(td[3]));
             i++;
         }
     }
