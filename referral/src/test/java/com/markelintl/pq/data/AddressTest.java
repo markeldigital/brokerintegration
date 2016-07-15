@@ -1,6 +1,5 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -51,13 +50,5 @@ public class AddressTest {
         final Address address = new Address("A", "B", new String[]{"C", "D"}, "E", "F");
 
         assertThat(address.toString(), is("ABCDEF"));
-    }
-
-    @Test
-    public void mapper_should_serialise_empty_json() throws IOException {
-        final ObjectMapper om = new ObjectMapper();
-        final Address address = om.readValue("{}", Address.class);
-
-        assertThat(address.toString(), is(""));
     }
 }

@@ -1,7 +1,5 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import com.google.common.base.Optional;
 
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ public final class Address {
     public final String province;
     public final String postcode;
 
-    @JsonCreator
     public Address(final Map<String, Object> props) {
         this((String) props.get("city"),
                 (String) props.get("country"),

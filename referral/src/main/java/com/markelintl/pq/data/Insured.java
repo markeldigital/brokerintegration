@@ -1,7 +1,5 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import com.google.common.base.Optional;
 
 import java.util.HashMap;
@@ -29,7 +27,6 @@ public final class Insured {
         this.mailingAddress = Optional.fromNullable(mailingAddress).or(new Address());
     }
 
-    @JsonCreator
     public Insured(Map<String, Object> props) {
        this((String) props.get("reference"),
             (String) props.get("fullname"),

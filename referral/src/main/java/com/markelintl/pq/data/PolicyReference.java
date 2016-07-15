@@ -1,17 +1,11 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Optional;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,7 +26,6 @@ public final class PolicyReference {
     public final LocalDate inception;
     public final Insured insured;
 
-    @JsonCreator
     public PolicyReference(Map<String, Object> props) throws ParseException {
         this((String) props.get("number"),
                 (String) props.get("timezone"),
@@ -117,19 +110,6 @@ public final class PolicyReference {
         }
 
         return 0;
-    }
-
-    public static String toJson(final PolicyReference policyReference)
-            throws JsonProcessingException {
-        final ObjectMapper om = new ObjectMapper();
-        om.registerModule(new JodaModule());
-        om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return om.writeValueAsString(policyReference);
-    }
-
-    public static PolicyReference fromJson(final String json) throws IOException {
-        final ObjectMapper om = new ObjectMapper();
-        return om.readValue(json, PolicyReference.class);
     }
 
     @Override

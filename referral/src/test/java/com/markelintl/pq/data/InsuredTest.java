@@ -1,26 +1,14 @@
 package com.markelintl.pq.data;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class InsuredTest {
-    @Test
-    public void compareTo_should_serialize_valid_insured() throws IOException {
-        final Insured actual = DataFixtures.insuredFixture();
-        final Address expectedAddress = new Address("Toronto", "Canada", new String[]{"200 Wellington Street West", "Suite 400"}, "Ontario", "M5V 3C7");
-        final Insured expected = new Insured("CUST1234", "Nate Fisher", "noreply@example.net", expectedAddress);
-
-        assertThat(actual, is(notNullValue()));
-        assertThat(actual.compareTo(expected), is(0));
-    }
-
     @Test
     public void compareTo_should_fail_on_mismatch() throws IOException {
         final String[][] testData = new String[][]{
@@ -34,8 +22,7 @@ public class InsuredTest {
                 {"Toronto", "Canada", "200 Wellington Street West", "Suite 400", "Ontario", "M5V 3C7","CUST1234", "Nate Fisher", "oreploy@example.net" },
         };
 
-        final ObjectMapper om = new ObjectMapper();
-        final Insured expected = om.readValue(DataFixtures.VALID_INSURED_FIXTURE, Insured.class);
+        final Insured expected = DataFixtures.insuredFixture();
         for (int i = 0; i < testData.length; i++) {
             final String[] d = testData[i];
             final Address address = new Address(d[0], d[1], new String[]{d[2], d[3]}, d[4], d[5]);
@@ -43,14 +30,6 @@ public class InsuredTest {
 
             assertThat("expected " + i + " to not equal fixture but did", expected.compareTo(insured), is(not(0)));
         }
-    }
-
-    @Test
-    public void serialise_should_handle_empty_json_map() throws IOException {
-        final ObjectMapper om = new ObjectMapper();
-        final Insured insured = om.readValue("{}", Insured.class);
-
-        assertThat(insured.toString(), is(""));
     }
 
     @Test

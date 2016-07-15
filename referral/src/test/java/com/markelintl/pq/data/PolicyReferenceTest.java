@@ -12,15 +12,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class PolicyReferenceTest {
-
-    @Test
-    public void compareTo_should_serialize_valid_insured() throws IOException, ParseException {
-        final PolicyReference expected = new PolicyReference("PR1234", "EST", parseDate("2016-01-01", "EST"), parseDate("2017-01-01", "EST"), DataFixtures.insuredFixture(), "BR1234");
-        final PolicyReference fixture = PolicyReference.fromJson(DataFixtures.VALID_POLICY_FIXTURE);
-
-        assertThat(fixture.compareTo(expected), is(0));
-    }
-
     private static final int CITY = 0;
     private static final int COUNTRY = CITY + 1;
     private static final int LINE0 = CITY + 2;
@@ -71,26 +62,6 @@ public class PolicyReferenceTest {
         final PolicyReference policy = DataFixtures.policyFixture();
 
         assertThat(policy.toString(), is("TorontoCanadaCUST1234EST2017-01-012016-01-01noreply@example.netNate Fisher200 Wellington Street WestSuite 400PR1234BR1234M5V 3C7Ontario"));
-    }
-
-    @Test
-    public void serialisation_should_be_loss_less() throws IOException, ParseException {
-        final Address address = new Address("Toronto", "Canada", new String[]{"200 Wellington Street West", "Suite 400"}, "Ontario", "M5V 3C7");
-        final Insured insured = new Insured("CUST1234", "Nate Fisher", "noreply@example.net", address);
-        final PolicyReference policy = new PolicyReference("PR1234", "EST", parseDate("2016-01-01", "EST"), parseDate("2017-01-01", "EST"), insured, "BR1234");
-        final String json = PolicyReference.toJson(policy);
-        final PolicyReference jsonPolicy = PolicyReference.fromJson(json);
-
-        assertThat(policy.reference, is(equalTo("BR1234")));
-        assertThat(jsonPolicy.reference, is(equalTo("BR1234")));
-        assertThat(jsonPolicy, is(equalTo(policy)));
-    }
-
-    @Test
-    public void serialisation_should_work_with_all_fields_missing() throws IOException {
-        final PolicyReference pr = PolicyReference.fromJson("{}");
-
-        assertThat(pr.toString(), is("GMT1970-01-011970-01-01"));
     }
 
     @Test
