@@ -46,7 +46,7 @@ public final class Address {
                    final String []lines,
                    final String province,
                    final String postcode) {
-        this(city, country, new ArrayList<>(Arrays.asList(lines)), province, postcode);
+        this(city, country, new ArrayList<String>(Arrays.asList(lines)), province, postcode);
     }
 
     public int compareTo(final Address otherAddress) {
@@ -143,7 +143,7 @@ public final class Address {
     }
 
     public static class Builder {
-        final HashMap<String, Object> map = new HashMap<>();
+        final HashMap<String, Object> map = new HashMap<String, Object>();
 
         public Builder withCity(final String city) {
             map.put("city", city);

@@ -113,7 +113,7 @@ public final class Insured {
     }
 
     public static class Builder {
-        final Map<String, Object> map = new HashMap<>();
+        final Map<String, Object> map = new HashMap<String, Object>();
 
         public Builder withFullname(final String fullname) {
             map.put("fullname", fullname);
