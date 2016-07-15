@@ -1,16 +1,12 @@
 SHELL=/bin/sh
 
+ifeq ($(JAVA_HOME),/usr/lib/jvm/java-6-openjdk-amd64/jre)
+	SKIP_CHECKSTYLE := -Dcheckstyle.skip=true
+endif
+
 .PHONY: all
 all: package
 
 .PHONY: package
 package:
-	mvn package
-
-.PHONY: style
-style:
-	mvn checkstyle:check
-
-.PHONY: pit
-pit:
-	mvn org.pitest:pitest-maven:mutationCoverage
+	mvn package $(SKIP_CHECKSTYLE)
