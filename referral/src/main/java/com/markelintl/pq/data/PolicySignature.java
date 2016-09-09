@@ -20,13 +20,18 @@ public class PolicySignature {
     public byte[] signPolicy(final long epoch,
                              final PolicyReference policy)
             throws NoSuchAlgorithmException, InvalidKeyException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(epoch);
-        sb.append(policy);
+        String s = payload(epoch, policy);
 
         final Mac mac = Mac.getInstance(ALGORITHM);
         mac.init(key);
-        return mac.doFinal(charset.encode(sb.toString()).array());
+        return mac.doFinal(charset.encode(s).array());
+    }
+
+    public static String payload(long epoch, PolicyReference policy) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(policy);
+        sb.append(epoch);
+        return sb.toString();
     }
 
     public String signToBase64(final long epoch,

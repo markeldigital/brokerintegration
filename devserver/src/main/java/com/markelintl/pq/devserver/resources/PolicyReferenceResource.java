@@ -18,6 +18,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import static com.markelintl.pq.data.PolicySignature.*;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 
 @Path(PolicyReferenceResource.PATH)
@@ -106,6 +107,7 @@ public class PolicyReferenceResource {
         }
 
         return SIGNATURE_INVALID + ", ref=" + policy.toString()
-                + ", b64=" + b64 + ", ts=" + timestamp.or(0L);
+                + ", b64=" + b64 + ", ts=" + timestamp.or(0L)
+                + ", input=" + payload(timestamp.or(0L), policy);
     }
 }
