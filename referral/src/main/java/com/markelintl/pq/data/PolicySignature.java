@@ -29,8 +29,8 @@ public class PolicySignature {
 
     public static String payload(long epoch, PolicyReference policy) {
         StringBuilder sb = new StringBuilder();
-        sb.append(policy);
         sb.append(epoch);
+        sb.append(policy);
         return sb.toString();
     }
 
