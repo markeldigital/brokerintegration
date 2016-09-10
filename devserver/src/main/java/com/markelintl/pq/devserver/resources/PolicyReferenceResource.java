@@ -7,6 +7,8 @@ import com.markelintl.pq.data.Insured;
 import com.markelintl.pq.data.PolicyReference;
 import com.markelintl.pq.data.PolicySignature;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -28,6 +30,7 @@ public class PolicyReferenceResource {
     public static final String SIGNATURE_INVALID = "Signature Invalid";
     public static final String DATE_INVALID = "Date Invalid";
     public static final String PATH = "/policy-reference";
+    public static final String UNKNOWN_ENCODING = "UTF-8 is an Unknown Encoding";
 
     private final PolicySignature signer;
 
@@ -106,8 +109,17 @@ public class PolicyReferenceResource {
             return SIGNATURE_OK;
         }
 
-        return SIGNATURE_INVALID + ", ref=" + policy.toString()
-                + ", b64=" + b64 + ", ts=" + timestamp.or(0L)
-                + ", input=" + payload(timestamp.or(0L), policy);
+        try {
+            return SIGNATURE_INVALID
+                    + ",<br/> ref=" + policy.toString()
+                    + ",<br/> base64sig=" + b64
+                    + ",<br/> urlencodesig=" + URLEncoder.encode(b64, "UTF-8")
+                    + ",<br/> ts=" + timestamp.or(0L)
+                    + ",<br/> input=" + payload(timestamp.or(0L), policy);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return "Unknown Error";
     }
 }
