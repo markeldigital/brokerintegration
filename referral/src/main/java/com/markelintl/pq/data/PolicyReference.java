@@ -58,13 +58,20 @@ public final class PolicyReference {
         this.reference = Optional.fromNullable(reference).or("");
     }
 
+    private static DateTimeZone timeZone(final String timezone) {
+       if (timezone.contentEquals("")) {
+           return DateTimeZone.forID("GMT");
+       }
+
+       return DateTimeZone.forID(timezone);
+    }
+
     public static LocalDate parseDate(final Object dateObj, final String timezone)
             throws ParseException {
-        final DateTimeZone dtz = DateTimeZone.forID(timezone == "" ? "GMT" : timezone);
-        final DateTimeFormatter dateFmt = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(dtz);
+        final DateTimeZone dtz = timeZone(timezone);
 
         if (String.class.isInstance(dateObj)) {
-            return parseDate((String) dateObj, dateFmt);
+            return parseDate((String) dateObj, dtz);
         } else if (Long.class.isInstance(dateObj)) {
             return parseDate((Long) dateObj, dtz);
         }
@@ -77,7 +84,9 @@ public final class PolicyReference {
         return dt;
     }
 
-    private static LocalDate parseDate(String dateObj, DateTimeFormatter dateFmt) {
+    private static LocalDate parseDate(final String dateObj, final DateTimeZone dtz) {
+        final DateTimeFormatter dateFmt = DateTimeFormat.forPattern("yyyy-MM-dd");
+        dateFmt.withZone(dtz);
         final String dateStr = dateObj;
         final LocalDate date = dateFmt.parseLocalDate(dateStr);
 

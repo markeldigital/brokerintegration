@@ -18,8 +18,8 @@ public class PolicySignatureTest {
         final PolicyReference policy = DataFixtures.policyFixture();
         final PolicySignature signer = new PolicySignature("qwerty1234");
 
-        assertThat(signer.signToBase64(1234, policy), is("fRVYXmWgq+LHmLKGkSRtxvQtIwaLhH07r9g39b8UxHI="));
-        assertThat(signer.verifyFromBase64(1234, policy, "fRVYXmWgq+LHmLKGkSRtxvQtIwaLhH07r9g39b8UxHI="), is(true));
+        assertThat("unexpected signature", signer.signToBase64(1234, policy), is("PQ0wxKHDQZCvVkYY1xQjz7MjyTC5puYofJ3Ng4Lz8qg="));
+        assertThat("verification failed", signer.verifyFromBase64(1234, policy, "PQ0wxKHDQZCvVkYY1xQjz7MjyTC5puYofJ3Ng4Lz8qg="), is(true));
     }
 
     @Test
@@ -27,8 +27,8 @@ public class PolicySignatureTest {
         final PolicyReference policy = new PolicyReference();
         final PolicySignature signer = new PolicySignature("antsInYourPants12345!&643211");
 
-        assertThat(signer.signToBase64(1234, policy), is("R7B9SvkaQgU+TwH72U+5yxzrugfp/Otpr+7oH7wLpZg="));
-        assertThat(signer.verifyFromBase64(1234, policy, "NeUIQTARTbfEJO1h3U9Am/hLXxvrAbK+yehpl0d1iZu="), is(false));
+        assertThat("signatures should match", signer.signToBase64(1234, policy), is("fXa+gvz81lJcIWUqhSbDe2+xVVvxU6FIkQC2moFdv0k="));
+        assertThat("verification not should match", signer.verifyFromBase64(1234, policy, "NeUIQTARTbfEJO1h3U9Am/hLXxvrAbK+yehpl0d1iZu="), is(false));
     }
 
     @Test
@@ -39,7 +39,6 @@ public class PolicySignatureTest {
         byte[] signature2 = signer.signPolicy(10, policy);
 
         assertThat(signature.length, is(32));
-        assertThat(signature, is(equalTo(signature)));
         assertThat(signature, not(equalTo(signature2)));
     }
 }
